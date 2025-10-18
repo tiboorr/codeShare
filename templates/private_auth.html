@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>codeShare - Private Files Access</title>
+    <!-- Apply theme BEFORE CSS loads to prevent flash -->
+    <script>
+        (function() {
+            const theme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', theme);
+        })();
+    </script>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header-with-toggle">
+            <div>
+                <h1>Private Files</h1>
+                <p class="subtitle">Enter password to view private files</p>
+            </div>
+            <button id="themeToggle" class="theme-toggle" aria-label="Toggle dark mode">
+                <span class="theme-icon">🌙</span>
+            </button>
+        </div>
+
+        <form method="post" action="/private" class="auth-form">
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required autofocus>
+            </div>
+
+            {% if error %}
+            <div class="error-message">{{ error }}</div>
+            {% endif %}
+
+            <button type="submit" class="btn">Access Private Files</button>
+        </form>
+
+        <a href="/" class="btn btn-secondary" style="margin-top: 20px; display: inline-block;">← Back to Home</a>
+    </div>
+
+    <script src="/static/theme.js"></script>
+</body>
+</html>

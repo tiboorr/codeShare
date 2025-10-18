@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>codeShare - {% if is_public %}Public{% else %}Private{% endif %} Files</title>
+    <!-- Apply theme BEFORE CSS loads to prevent flash -->
+    <script>
+        (function() {
+            const theme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', theme);
+        })();
+    </script>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header-with-toggle">
+            <h1>{% if is_public %}Public{% else %}Private{% endif %} Files</h1>
+            <button id="themeToggle" class="theme-toggle" aria-label="Toggle dark mode">
+                <span class="theme-icon">🌙</span>
+            </button>
+        </div>
+        <a href="/" class="btn btn-secondary">← Back to Upload</a>
+
+        {% if files %}
+        <!-- Search bar -->
+        <div class="search-container">
+            <input type="text" id="searchInput" class="search-input" placeholder="🔍 Search files...">
+            <span class="search-results-count" id="searchCount"></span>
+        </div>
+
+        <div class="files-list" id="filesList">
+            {% for file in files %}
+            <div class="file-item" id="file-{{ file.file_id }}" data-filename="{{ file.original_filename|lower }}">
+                <div class="file-header">
+                    <h3>{{ file.original_filename }}</h3>
+                    <span class="file-date">{{ file.upload_date | format_datetime_local }}</span>
+                </div>
+                <div class="file-info">
+                    <span class="file-size">{{ file.file_size | format_file_size }}</span>
+                </div>
+                <div class="file-actions">
+                    <div class="file-actions-left">
+                        <a href="/preview/{{ file.file_id }}" target="_blank" class="btn btn-small">Preview</a>
+                        <a href="/download/{{ file.file_id }}" class="btn btn-small btn-secondary">Download</a>
+                    </div>
+                    <button class="btn btn-small btn-danger delete-btn" data-file-id="{{ file.file_id }}" data-filename="{{ file.original_filename }}">Delete</button>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <p class="no-results" id="noResults" style="display: none;">No files found matching your search.</p>
+        {% else %}
+        <p class="no-files">No files uploaded yet.</p>
+        {% endif %}
+    </div>
+
+    <!-- Delete confirmation modal -->
+    <div id="deleteModal" class="modal">
+        <div class="modal-content">
+            <h2>Delete File</h2>
+            <p>Are you sure you want to delete <strong id="deleteFileName"></strong>?</p>
+            <form id="deleteForm">
+                <div class="form-group">
+                    <label for="deletePassword">Enter delete password:</label>
+                    <input type="password" id="deletePassword" name="password" required autofocus>
+                </div>
+                <div class="modal-buttons">
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                    <button type="button" class="btn btn-secondary" id="cancelDelete">Cancel</button>
+                </div>
+                <div id="deleteMessage"></div>
+            </form>
+        </div>
+    </div>
+
+    <script src="/static/theme.js"></script>
+    <script src="/static/search.js"></script>
+    <script src="/static/files.js"></script>
+</body>
+</html>

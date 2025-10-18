@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>codeShare - File Upload</title>
+    <!-- Apply theme BEFORE CSS loads to prevent flash -->
+    <script>
+        (function() {
+            const theme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', theme);
+        })();
+    </script>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header-with-toggle">
+            <div>
+                <h1>codeShare</h1>
+                <p class="subtitle">Share files securely</p>
+            </div>
+            <button id="themeToggle" class="theme-toggle" aria-label="Toggle dark mode">
+                <span class="theme-icon">🌙</span>
+            </button>
+        </div>
+
+        <div class="upload-section">
+            <div id="dropZone" class="drop-zone">
+                <p>Drag & drop files here or click to select</p>
+                <p class="file-info">Max size per file: 500MB | Multiple files supported</p>
+                <input type="file" id="fileInput" style="display: none;" multiple>
+                <div id="fileInfo" class="file-selected"></div>
+            </div>
+
+            <form id="uploadForm">
+                <div class="form-group">
+                    <label for="password">Upload Password:</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Upload Type:</label>
+                    <div class="radio-group">
+                        <label>
+                            <input type="radio" name="is_public" value="true" checked>
+                            Public
+                        </label>
+                        <label>
+                            <input type="radio" name="is_public" value="false">
+                            Private
+                        </label>
+                    </div>
+                </div>
+
+                <button type="submit" id="uploadBtn" disabled>Upload Files</button>
+                <div id="uploadProgress"></div>
+                <div id="uploadStatus"></div>
+                <div id="message"></div>
+            </form>
+        </div>
+
+        <div class="view-section">
+            <a href="/public" class="btn">View Public Files</a>
+            <a href="/private" class="btn btn-secondary">View Private Files</a>
+        </div>
+    </div>
+
+    <script src="/static/theme.js"></script>
+    <script src="/static/upload.js"></script>
+</body>
+</html>
