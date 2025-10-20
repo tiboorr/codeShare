@@ -68,7 +68,7 @@ deleteForm.addEventListener('submit', async (e) => {
         
         if (response.ok) {
             // Show success message
-            showDeleteMessage('File deleted successfully!', 'success');
+            showDeleteMessage('Datoteka uspešno izbrisana!', 'success');
             
             // Remove file item from DOM with animation
             const fileItem = document.getElementById(`file-${currentFileId}`);
@@ -83,7 +83,7 @@ deleteForm.addEventListener('submit', async (e) => {
                     // Check if there are no more files
                     const filesList = document.querySelector('.files-list');
                     if (filesList && filesList.children.length === 0) {
-                        filesList.innerHTML = '<p class="no-files">No files uploaded yet.</p>';
+                        filesList.innerHTML = '<p class="no-files">Še ni naloženih datotek.</p>';
                     }
                 }, 300);
             }
@@ -94,13 +94,21 @@ deleteForm.addEventListener('submit', async (e) => {
             }, 1500);
             
         } else {
-            showDeleteMessage(data.detail || 'Failed to delete file', 'error');
+            showDeleteMessage(data.detail || 'Napaka pri brisanju datoteke', 'error');
         }
     } catch (error) {
-        showDeleteMessage(`Error: ${error.message}`, 'error');
+        showDeleteMessage(`Napaka: ${error.message}`, 'error');
     }
 });
 
 function showDeleteMessage(text, type) {
     deleteMessage.innerHTML = `<div class="message ${type}-message">${text}</div>`;
+}
+
+// Update file list when empty
+function checkEmptyFileList() {
+    const filesList = document.querySelector('.files-list');
+    if (filesList && filesList.children.length === 0) {
+        filesList.innerHTML = '<p class="no-files">Še ni naloženih datotek.</p>';
+    }
 }

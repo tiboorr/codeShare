@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>codeShare - {% if is_public %}Public{% else %}Private{% endif %} Files</title>
+    <title>codeShare - {% if is_public %}Javne{% else %}Zasebne{% endif %} Datoteke</title>
     <link rel="icon" href="/static/image.png" type="image/x-icon">
     <!-- Apply theme BEFORE CSS loads to prevent flash -->
     <script>
@@ -15,70 +15,167 @@
     <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-    <div class="container">
-        <div class="header-with-toggle">
-            <h1>{% if is_public %}Public{% else %}Private{% endif %} Files</h1>
-            <button id="themeToggle" class="theme-toggle" aria-label="Toggle dark mode">
-                <span class="theme-icon">🌙</span>
-            </button>
-        </div>
-        <a href="/" class="btn btn-secondary">← Back to Home</a>
-
-        {% if files %}
-        <!-- Search bar -->
-        <div class="search-container">
-            <input type="text" id="searchInput" class="search-input" placeholder="🔍 Search files...">
-            <span class="search-results-count" id="searchCount"></span>
-        </div>
-
-        <div class="files-list" id="filesList">
-            {% for file in files %}
-            <div class="file-item" id="file-{{ file.file_id }}" data-filename="{{ file.original_filename|lower }}">
-                <div class="file-header">
-                    <h3>{{ file.original_filename }}</h3>
-                    <span class="file-date">{{ file.upload_date | format_datetime_local }}</span>
-                </div>
-                <div class="file-info">
-                    <span class="file-size">{{ file.file_size | format_file_size }}</span>
-                </div>
-                <div class="file-actions">
-                    <div class="file-actions-left">
-                        <a href="/preview/{{ file.file_id }}" target="_blank" class="btn btn-small">Preview</a>
-                        <a href="/download/{{ file.file_id }}" class="btn btn-small btn-secondary">Download</a>
-                    </div>
-                    <button class="btn btn-small btn-danger delete-btn" data-file-id="{{ file.file_id }}" data-filename="{{ file.original_filename }}">Delete</button>
+    <div class="container-with-sidebar">
+        <!-- Folder sidebar -->
+        <div class="folder-sidebar" id="folderSidebar">
+            <div class="sidebar-header">
+                <h3>📁 Mape</h3>
+                <button id="newFolderBtn" class="btn-icon" title="Nova mapa">+</button>
+            </div>
+            
+            <div class="folder-list" id="folderList">
+                <div class="folder-item uncategorized active" data-folder-id="uncategorized">
+                    <span class="folder-icon">📂</span>
+                    <span class="folder-name">Nekategorizirano</span>
+                    <span class="folder-count" id="uncategorizedCount">0</span>
                 </div>
             </div>
-            {% endfor %}
         </div>
 
-        <p class="no-results" id="noResults" style="display: none;">No files found matching your search.</p>
-        {% else %}
-        <p class="no-files">No files uploaded yet.</p>
-        {% endif %}
+        <!-- Main content -->
+        <div class="main-content">
+            <div class="container">
+                <div class="header-with-toggle">
+                    <h1>{% if is_public %}Javne{% else %}Zasebne{% endif %} Datoteke</h1>
+                    <button id="themeToggle" class="theme-toggle" aria-label="Toggle dark mode">
+                        <span class="theme-icon">🌙</span>
+                    </button>
+                </div>
+                <a href="/" class="btn btn-secondary">← Nazaj na Domov</a>
+
+                {% if files %}
+                <!-- Search bar -->
+                <div class="search-container">
+                    <input type="text" id="searchInput" class="search-input" placeholder="🔍 Išči datoteke...">
+                    <span class="search-results-count" id="searchCount"></span>
+                </div>
+
+                <div class="files-list" id="filesList">
+                    {% for file in files %}
+                    <div class="file-item" id="file-{{ file.file_id }}" 
+                         data-filename="{{ file.original_filename|lower }}"
+                         data-file-db-id="{{ file.id }}"
+                         data-folders="{{ file.folders|map(attribute='id')|join(',') }}">
+                        <div class="file-header">
+                            <h3>{{ file.original_filename }}</h3>
+                            <span class="file-date">{{ file.upload_date | format_datetime_local }}</span>
+                        </div>
+                        <div class="file-info">
+                            <span class="file-size">{{ file.file_size | format_file_size }}</span>
+                            {% if file.folders %}
+                            <span class="file-folders">
+                                📁 {% for folder in file.folders %}{{ folder.name }}{% if not loop.last %}, {% endif %}{% endfor %}
+                            </span>
+                            {% endif %}
+                        </div>
+                        <div class="file-actions">
+                            <div class="file-actions-left">
+                                <a href="/preview/{{ file.file_id }}" target="_blank" class="btn btn-small">Predogled</a>
+                                <a href="/download/{{ file.file_id }}" class="btn btn-small btn-secondary">Prenesi</a>
+                                <button class="btn btn-small btn-folder-assign" 
+                                        data-file-id="{{ file.file_id }}"
+                                        data-file-db-id="{{ file.id }}"
+                                        data-filename="{{ file.original_filename }}">
+                                    Dodaj v Mapo
+                                </button>
+                            </div>
+                            <button class="btn btn-small btn-danger delete-btn" 
+                                    data-file-id="{{ file.file_id }}" 
+                                    data-filename="{{ file.original_filename }}">
+                                Izbriši
+                            </button>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <p class="no-results" id="noResults" style="display: none;">Nobena datoteka ne ustreza iskanju.</p>
+                {% else %}
+                <p class="no-files">Še ni naloženih datotek.</p>
+                {% endif %}
+            </div>
+        </div>
     </div>
 
     <!-- Delete confirmation modal -->
     <div id="deleteModal" class="modal">
         <div class="modal-content">
-            <h2>Delete File</h2>
-            <p>Are you sure you want to delete <strong id="deleteFileName"></strong>?</p>
+            <h2>Izbriši Datoteko</h2>
+            <p>Ali ste prepričani, da želite izbrisati <strong id="deleteFileName"></strong>?</p>
             <form id="deleteForm">
                 <div class="form-group">
-                    <label for="deletePassword">Enter delete password:</label>
+                    <label for="deletePassword">Vnesite geslo za brisanje:</label>
                     <input type="password" id="deletePassword" name="password" required autofocus>
                 </div>
                 <div class="modal-buttons">
-                    <button type="submit" class="btn btn-danger">Delete</button>
-                    <button type="button" class="btn btn-secondary" id="cancelDelete">Cancel</button>
+                    <button type="submit" class="btn btn-danger">Izbriši</button>
+                    <button type="button" class="btn btn-secondary" id="cancelDelete">Prekliči</button>
                 </div>
                 <div id="deleteMessage"></div>
             </form>
         </div>
     </div>
 
+    <!-- New folder modal -->
+    <div id="newFolderModal" class="modal">
+        <div class="modal-content">
+            <h2>Nova Mapa</h2>
+            <form id="newFolderForm">
+                <div class="form-group">
+                    <label for="folderName">Ime mape:</label>
+                    <input type="text" id="folderName" name="name" required autofocus>
+                </div>
+                <div class="modal-buttons">
+                    <button type="submit" class="btn">Ustvari</button>
+                    <button type="button" class="btn btn-secondary" id="cancelNewFolder">Prekliči</button>
+                </div>
+                <div id="newFolderMessage"></div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Rename folder modal -->
+    <div id="renameFolderModal" class="modal">
+        <div class="modal-content">
+            <h2>Preimenuj Mapo</h2>
+            <form id="renameFolderForm">
+                <div class="form-group">
+                    <label for="renameFolderName">Novo ime:</label>
+                    <input type="text" id="renameFolderName" name="name" required autofocus>
+                </div>
+                <div class="modal-buttons">
+                    <button type="submit" class="btn">Preimenuj</button>
+                    <button type="button" class="btn btn-secondary" id="cancelRenameFolder">Prekliči</button>
+                </div>
+                <div id="renameFolderMessage"></div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Assign to folder modal -->
+    <div id="assignFolderModal" class="modal">
+        <div class="modal-content">
+            <h2>Dodaj v Mapo</h2>
+            <p>Dodaj <strong id="assignFileName"></strong> v mape:</p>
+            <div id="folderCheckboxList" class="folder-checkbox-list">
+                <!-- Dynamically populated -->
+            </div>
+            <div class="modal-buttons">
+                <button type="button" class="btn" id="saveAssignments">Shrani</button>
+                <button type="button" class="btn btn-secondary" id="cancelAssignFolder">Prekliči</button>
+            </div>
+            <div id="assignFolderMessage"></div>
+        </div>
+    </div>
+
+    <script>
+        // Pass data from server to JavaScript
+        window.isPublicView = {{ 'true' if is_public else 'false' }};
+        window.privatePassword = {% if not is_public and private_password %}'{{ private_password }}'{% else %}null{% endif %};
+    </script>
     <script src="/static/theme.js"></script>
     <script src="/static/search.js"></script>
+    <script src="/static/folders.js"></script>
     <script src="/static/files.js"></script>
 </body>
 </html>

@@ -34,33 +34,33 @@
 
         <div class="upload-section">
             <div id="dropZone" class="drop-zone">
-                <p>Drag & drop files here or click to select</p>
-                <p class="file-info">Max size per file: 500MB | Multiple files supported</p>
+                <p>Povleci in spusti datoteke sem ali klikni za izbiro</p>
+                <p class="file-info">Največ 500MB na datoteko | Podpora za več datotek</p>
                 <input type="file" id="fileInput" style="display: none;" multiple>
                 <div id="fileInfo" class="file-selected"></div>
             </div>
 
             <form id="uploadForm">
                 <div class="form-group">
-                    <label for="password">Upload Password:</label>
+                    <label for="password">Geslo za Nalaganje:</label>
                     <input type="password" id="password" name="password" required>
                 </div>
 
                 <div class="form-group">
-                    <label>Upload Type:</label>
+                    <label>Tip Nalaganja:</label>
                     <div class="radio-group">
                         <label>
                             <input type="radio" name="is_public" value="true" checked>
-                            Public
+                            Javno
                         </label>
                         <label>
                             <input type="radio" name="is_public" value="false">
-                            Private
+                            Zasebno
                         </label>
                     </div>
                 </div>
 
-                <button type="submit" id="uploadBtn" disabled>Upload Files</button>
+                <button type="submit" id="uploadBtn" disabled>Naloži Datoteke</button>
                 <div id="uploadProgress"></div>
                 <div id="uploadStatus"></div>
                 <div id="message"></div>
@@ -68,8 +68,8 @@
         </div>
 
         <div class="view-section">
-            <a href="/public" class="btn">View Public Files</a>
-            <a href="/private" class="btn btn-secondary">View Private Files</a>
+            <a href="/public" class="btn">Poglej Javne Datoteke</a>
+            <a href="/private" class="btn btn-secondary">Poglej Zasebne Datoteke</a>
         </div>
     </div>
 

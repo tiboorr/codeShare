@@ -314,13 +314,13 @@ async def private_files(
     if not verify_private_password(password):
         return templates.TemplateResponse(
             "private_auth.html",
-            {"request": request, "error": "Invalid password"}
+            {"request": request, "error": "Napačno geslo"}
         )
     
     files = crud.get_private_files(db)
     return templates.TemplateResponse(
         "files.html",
-        {"request": request, "files": files, "is_public": False}
+        {"request": request, "files": files, "is_public": False, "private_password": password}
     )
 
 
@@ -416,6 +416,199 @@ async def preview_file(request: Request, file_id: str, db: Session = Depends(get
 async def health_check(request: Request):
     """Health check endpoint"""
     return {"status": "healthy", "timestamp": datetime.utcnow().isoformat()}
+
+
+# ============================================================================
+# FOLDER MANAGEMENT ENDPOINTS
+# ============================================================================
+
+@app.get("/api/folders")
+@limiter.limit(RATE_LIMIT_PAGES)
+async def get_folders_api(
+    request: Request,
+    is_public: bool,
+    password: Optional[str] = None,
+    db: Session = Depends(get_db)
+):
+    """Get all folders for public or private section"""
+    # Verify access for private folders
+    if not is_public:
+        if not password or not verify_private_password(password):
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid password"
+            )
+    
+    folders = crud.get_folders(db, is_public)
+    return {
+        "folders": [
+            {
+                "id": folder.id,
+                "name": folder.name,
+                "file_count": len(folder.files),
+                "is_public": folder.is_public
+            }
+            for folder in folders
+        ]
+    }
+
+
+@app.post("/api/folders")
+@limiter.limit(RATE_LIMIT_UPLOAD)
+async def create_folder_api(
+    request: Request,
+    name: str = Form(...),
+    is_public: bool = Form(...),
+    password: str = Form(...),
+    db: Session = Depends(get_db)
+):
+    """Create a new folder"""
+    # Verify password
+    if not verify_upload_password(password):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid password"
+        )
+    
+    # Create folder
+    folder = crud.create_folder(db, name, is_public)
+    return {
+        "message": "Folder created successfully",
+        "folder": {
+            "id": folder.id,
+            "name": folder.name,
+            "is_public": folder.is_public
+        }
+    }
+
+
+@app.put("/api/folders/{folder_id}")
+@limiter.limit(RATE_LIMIT_UPLOAD)
+async def update_folder_api(
+    request: Request,
+    folder_id: int,
+    name: str = Form(...),
+    password: str = Form(...),
+    db: Session = Depends(get_db)
+):
+    """Update folder name"""
+    # Verify password
+    if not verify_upload_password(password):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid password"
+        )
+    
+    folder = crud.update_folder(db, folder_id, name)
+    if not folder:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Folder not found"
+        )
+    
+    return {
+        "message": "Folder updated successfully",
+        "folder": {
+            "id": folder.id,
+            "name": folder.name
+        }
+    }
+
+
+@app.delete("/api/folders/{folder_id}")
+@limiter.limit(RATE_LIMIT_DELETE)
+async def delete_folder_api(
+    request: Request,
+    folder_id: int,
+    password: str = Form(...),
+    db: Session = Depends(get_db)
+):
+    """Delete folder"""
+    # Verify password
+    if not verify_delete_password(password):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid password"
+        )
+    
+    success = crud.delete_folder(db, folder_id)
+    if not success:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Folder not found"
+        )
+    
+    return {"message": "Folder deleted successfully"}
+
+
+@app.post("/api/folders/{folder_id}/files")
+@limiter.limit(RATE_LIMIT_UPLOAD)
+async def add_file_to_folder_api(
+    request: Request,
+    folder_id: int,
+    file_id: str = Form(...),
+    password: str = Form(...),
+    db: Session = Depends(get_db)
+):
+    """Add file to folder"""
+    # Verify password
+    if not verify_upload_password(password):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid password"
+        )
+    
+    # Get file
+    db_file = crud.get_file(db, file_id)
+    if not db_file:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="File not found"
+        )
+    
+    success = crud.add_file_to_folder(db, folder_id, db_file.id)
+    if not success:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Failed to add file to folder"
+        )
+    
+    return {"message": "File added to folder successfully"}
+
+
+@app.delete("/api/folders/{folder_id}/files/{file_id}")
+@limiter.limit(RATE_LIMIT_DELETE)
+async def remove_file_from_folder_api(
+    request: Request,
+    folder_id: int,
+    file_id: str,
+    password: str = Form(...),
+    db: Session = Depends(get_db)
+):
+    """Remove file from folder"""
+    # Verify password
+    if not verify_delete_password(password):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid password"
+        )
+    
+    # Get file
+    db_file = crud.get_file(db, file_id)
+    if not db_file:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="File not found"
+        )
+    
+    success = crud.remove_file_from_folder(db, folder_id, db_file.id)
+    if not success:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Failed to remove file from folder"
+        )
+    
+    return {"message": "File removed from folder successfully"}
 
 
 # ============================================================================

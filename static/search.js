@@ -23,7 +23,7 @@ if (searchInput) {
 
         // Update results count
         if (searchTerm) {
-            searchCount.textContent = `${visibleCount} result${visibleCount !== 1 ? 's' : ''}`;
+            searchCount.textContent = `${visibleCount} rezultat${visibleCount !== 1 ? 'i' : ''}`;
             searchCount.style.display = 'inline';
         } else {
             searchCount.style.display = 'none';

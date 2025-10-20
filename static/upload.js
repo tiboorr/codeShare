@@ -65,16 +65,16 @@ function handleFiles(files) {
     
     files.forEach(file => {
         if (file.size > maxSize) {
-            invalidFiles.push(`${file.name} (too large)`);
+            invalidFiles.push(`${file.name} (prevelika)`);
         } else if (file.size === 0) {
-            invalidFiles.push(`${file.name} (empty file)`);
+            invalidFiles.push(`${file.name} (prazna datoteka)`);
         } else {
             validFiles.push(file);
         }
     });
     
     if (invalidFiles.length > 0) {
-        showMessage(`Invalid files: ${invalidFiles.join(', ')}`, 'error');
+        showMessage(`Neveljavne datoteke: ${invalidFiles.join(', ')}`, 'error');
     }
     
     if (validFiles.length === 0) {
@@ -102,8 +102,8 @@ function displaySelectedFiles() {
     const totalSize = selectedFiles.reduce((sum, file) => sum + file.size, 0);
     
     let html = `<div class="files-summary">
-        <strong>${selectedFiles.length} file(s) selected</strong> 
-        <span>(Total: ${formatFileSize(totalSize)})</span>
+        <strong>${selectedFiles.length} datoteka(e) izbrano</strong> 
+        <span>(Skupaj: ${formatFileSize(totalSize)})</span>
     </div>
     <ul class="selected-files-list">`;
     
@@ -141,9 +141,9 @@ function removeFile(index) {
 }
 
 function formatFileSize(bytes) {
-    if (bytes === 0) return '0 Bytes';
+    if (bytes === 0) return '0 Bajtov';
     const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const sizes = ['Bajtov', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
 }
@@ -155,7 +155,7 @@ function showMessage(text, type) {
 function updateUploadStatus(current, total, currentFileName) {
     uploadStatus.innerHTML = `
         <div class="upload-status-item">
-            Uploading ${current} of ${total}: <strong>${currentFileName}</strong>
+            Nalaganje ${current} od ${total}: <strong>${currentFileName}</strong>
         </div>
     `;
 }
@@ -165,7 +165,7 @@ uploadForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     
     if (selectedFiles.length === 0) {
-        showMessage('Please select at least one file!', 'error');
+        showMessage('Prosimo izberite vsaj eno datoteko!', 'error');
         return;
     }
     
@@ -216,10 +216,10 @@ uploadForm.addEventListener('submit', async (e) => {
     // Show results
     let resultMessage = '';
     if (successCount > 0) {
-        resultMessage += `Successfully uploaded ${successCount} file(s)! `;
+        resultMessage += `Uspešno naloženo ${successCount} datoteka(e)! `;
     }
     if (failCount > 0) {
-        resultMessage += `Failed to upload ${failCount} file(s): ${failedFiles.join(', ')}`;
+        resultMessage += `Napaka pri nalaganju ${failCount} datoteka(e): ${failedFiles.join(', ')}`;
     }
     
     showMessage(resultMessage, failCount === 0 ? 'success' : 'error');

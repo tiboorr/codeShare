@@ -873,4 +873,218 @@ button[type="submit"] {
     .modal-buttons {
         flex-direction: column;
     }
+
+    .container-with-sidebar {
+        flex-direction: column;
+    }
+
+    .folder-sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid var(--border-color);
+        max-height: 300px;
+        overflow-y: auto;
+    }
+
+    .main-content {
+        width: 100%;
+    }
+}
+
+/* Folder sidebar styles */
+.container-with-sidebar {
+    display: flex;
+    gap: 0;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.folder-sidebar {
+    width: 280px;
+    background: var(--bg-secondary);
+    border-right: 1px solid var(--border-color);
+    padding: 20px;
+    min-height: 100vh;
+    transition: background-color 0.3s ease;
+}
+
+.sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.sidebar-header h3 {
+    margin: 0;
+    color: var(--text-tertiary);
+    font-size: 1.1em;
+}
+
+.btn-icon {
+    background: var(--accent-blue);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+    font-size: 1.2em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    padding: 0;
+}
+
+.btn-icon:hover {
+    background: var(--accent-blue-hover);
+    transform: scale(1.1);
+}
+
+.folder-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.folder-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: var(--bg-tertiary);
+    position: relative;
+}
+
+.folder-item:hover {
+    background: var(--bg-hover);
+    transform: translateX(4px);
+}
+
+.folder-item.active {
+    background: var(--accent-blue);
+    color: white;
+    font-weight: bold;
+}
+
+.folder-item.active .folder-icon,
+.folder-item.active .folder-name,
+.folder-item.active .folder-count {
+    color: white;
+}
+
+.folder-icon {
+    font-size: 1.2em;
+    flex-shrink: 0;
+}
+
+.folder-name {
+    flex: 1;
+    color: var(--text-tertiary);
+    word-break: break-word;
+    transition: color 0.3s ease;
+}
+
+.folder-count {
+    background: var(--bg-primary);
+    color: var(--text-secondary);
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.85em;
+    font-weight: bold;
+    flex-shrink: 0;
+    transition: all 0.3s ease;
+}
+
+.folder-item.active .folder-count {
+    background: rgba(255, 255, 255, 0.3);
+    color: white;
+}
+
+.folder-actions {
+    display: none;
+    gap: 4px;
+    margin-left: 8px;
+}
+
+.folder-item:hover .folder-actions {
+    display: flex;
+}
+
+.folder-actions .btn-icon {
+    width: 24px;
+    height: 24px;
+    font-size: 0.9em;
+    background: var(--accent-gray);
+}
+
+.folder-actions .btn-icon:hover {
+    background: var(--accent-gray-hover);
+}
+
+.folder-actions .delete-folder:hover {
+    background: var(--accent-red);
+}
+
+.main-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.btn-folder-assign {
+    background: var(--accent-green);
+}
+
+.btn-folder-assign:hover {
+    background: #229954;
+    box-shadow: 0 4px 12px rgba(39, 174, 96, 0.3);
+}
+
+.file-folders {
+    margin-left: 15px;
+    color: var(--text-secondary);
+    font-size: 0.85em;
+}
+
+.folder-checkbox-list {
+    max-height: 300px;
+    overflow-y: auto;
+    margin: 15px 0;
+    padding: 10px;
+    background: var(--bg-tertiary);
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+}
+
+.folder-checkbox-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px;
+    margin-bottom: 8px;
+    background: var(--bg-secondary);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.folder-checkbox-item:hover {
+    background: var(--bg-hover);
+}
+
+.folder-checkbox-item input[type="checkbox"] {
+    cursor: pointer;
+}
+
+.no-folders {
+    text-align: center;
+    color: var(--text-secondary);
+    padding: 20px;
+    font-style: italic;
 }

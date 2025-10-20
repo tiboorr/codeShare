@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>codeShare - Private Files Access</title>
+    <title>codeShare - Dostop do Zasebnih Datotek</title>
     <link rel="icon" href="/static/image.png" type="image/x-icon">
     <!-- Apply theme BEFORE CSS loads to prevent flash -->
     <script>
@@ -18,8 +18,8 @@
     <div class="container">
         <div class="header-with-toggle">
             <div>
-                <h1>Private Files</h1>
-                <p class="subtitle">Enter password to view private files</p>
+                <h1>Zasebne Datoteke</h1>
+                <p class="subtitle">Vnesite geslo za dostop do zasebnih datotek</p>
             </div>
             <button id="themeToggle" class="theme-toggle" aria-label="Toggle dark mode">
                 <span class="theme-icon">🌙</span>
@@ -28,7 +28,7 @@
 
         <form method="post" action="/private" class="auth-form">
             <div class="form-group">
-                <label for="password">Password:</label>
+                <label for="password">Geslo:</label>
                 <input type="password" id="password" name="password" required autofocus>
             </div>
 
@@ -36,10 +36,10 @@
             <div class="error-message">{{ error }}</div>
             {% endif %}
 
-            <button type="submit" class="btn">Access Private Files</button>
+            <button type="submit" class="btn">Dostop do Zasebnih Datotek</button>
         </form>
 
-        <a href="/" class="btn btn-secondary" style="margin-top: 20px; display: inline-block;">← Back to Home</a>
+        <a href="/" class="btn btn-secondary" style="margin-top: 20px; display: inline-block;">← Nazaj na Domov</a>
     </div>
 
     <script src="/static/theme.js"></script>
