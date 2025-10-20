@@ -26,6 +26,9 @@
     --accent-red-hover: #c0392b;
     --accent-gray: #95a5a6;
     --accent-gray-hover: #7f8c8d;
+    --link-color: #3498db;
+    --link-hover: #2980b9;
+    --link-visited: #9b59b6;
 }
 
 /* Dark mode colors */
@@ -50,6 +53,9 @@
     --accent-red-hover: #e74c3c;
     --accent-gray: #7f8c8d;
     --accent-gray-hover: #95a5a6;
+    --link-color: #5dade2;
+    --link-hover: #7ec8f0;
+    --link-visited: #bb8fce;
 }
 
 body {
@@ -61,6 +67,41 @@ body {
     min-height: 100vh;
     position: relative;
     transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Link styles */
+a {
+    color: var(--link-color);
+    text-decoration: none;
+    transition: color 0.3s ease, text-decoration 0.3s ease;
+}
+
+a:hover {
+    color: var(--link-hover);
+    text-decoration: underline;
+}
+
+a:visited {
+    color: var(--link-visited);
+}
+
+a:active {
+    color: var(--accent-blue-hover);
+}
+
+/* Exception: Button links should not have link styling */
+a.btn {
+    color: white;
+    text-decoration: none;
+}
+
+a.btn:hover {
+    color: white;
+    text-decoration: none;
+}
+
+a.btn:visited {
+    color: white;
 }
 
 /* Drag overlay for entire window */
@@ -162,6 +203,28 @@ body.dragging .container {
     transition: transform 0.3s ease;
 }
 
+.right-block {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end; /* image on the right */
+    gap: 18px;
+}
+
+.header-image {
+    width: 100px;
+    max-width: 35vw;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+    object-fit: cover;
+    display: block;
+    user-drag: none;
+    -webkit-user-drag: none;
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+}
+
+
 h1 {
     color: var(--text-tertiary);
     margin-bottom: 10px;
@@ -170,7 +233,6 @@ h1 {
 
 .subtitle {
     color: var(--text-secondary);
-    margin-bottom: 30px;
 }
 
 /* Search container */
@@ -237,6 +299,7 @@ h1 {
     background: var(--bg-tertiary);
     position: relative;
     overflow: hidden;
+    margin-top: 40px;
 }
 
 .drop-zone::before {
